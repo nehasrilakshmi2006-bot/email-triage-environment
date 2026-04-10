@@ -1,0 +1,68 @@
+name: email-triage-env
+version: "1.0.0"
+description: >
+  Real-world OpenEnv environment where an AI agent triages emails by
+  priority, category, and routing destination. Three difficulty levels.
+
+tasks:
+  - id: task_easy
+    name: "Basic Email Prioritization"
+    description: "Classify simple emails by priority and category."
+    difficulty: easy
+    reward_range: [0.0, 1.0]
+  - id: task_medium
+    name: "Email Routing"
+    description: "Classify moderately complex emails and route to correct team."
+    difficulty: medium
+    reward_range: [0.0, 1.0]
+  - id: task_hard
+    name: "Complex Multi-Factor Triage"
+    description: "Handle nuanced emails: security, legal, and HR scenarios."
+    difficulty: hard
+    reward_range: [0.0, 1.0]
+
+observation_space:
+  type: dict
+  fields:
+    - name: email
+      type: dict
+    - name: emails_remaining
+      type: int
+    - name: valid_priorities
+      type: list
+    - name: valid_categories
+      type: list
+    - name: valid_routes
+      type: list
+
+action_space:
+  type: dict
+  fields:
+    - name: priority
+      type: string
+      values: [urgent, high, medium, low]
+    - name: category
+      type: string
+      values: [technical, billing, personal, business, product, newsletter, security, hr, legal, other]
+    - name: route
+      type: string
+      values: [engineering, finance, sales, hr_team, legal_team, security_team, no_action, management]
+
+reward:
+  type: float
+  range: [0.0, 1.0]
+  description: >
+    0.4 for correct priority (0.2 partial for adjacent level),
+    0.3 for correct category, 0.3 for correct route.
+
+api:
+  reset_endpoint: /reset
+  step_endpoint: /step
+  state_endpoint: /state
+  tasks_endpoint: /tasks
+  port: 7860
+
+runtime:
+  framework: fastapi
+  python: "3.11"
+  docker: true
