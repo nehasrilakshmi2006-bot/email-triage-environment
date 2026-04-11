@@ -269,3 +269,10 @@ async def tasks():
 async def _err(request: Request, exc: Exception):
     traceback.print_exc()
     return JSONResponse(status_code=500, content={"error": str(exc)})
+
+def main():
+    import uvicorn
+    uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
+
+if __name__ == "__main__":
+    main()
